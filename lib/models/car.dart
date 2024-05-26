@@ -1,3 +1,35 @@
+class Comment {
+  final String userId;
+  final String userName;
+  final String text;
+  final DateTime date;
+
+  Comment({
+    required this.userId,
+    required this.userName,
+    required this.text,
+    required this.date,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'userName': userName,
+      'text': text,
+      'date': date.toIso8601String(),
+    };
+  }
+
+  factory Comment.fromMap(Map<String, dynamic> map) {
+    return Comment(
+      userId: map['userId'],
+      userName: map['userName'],
+      text: map['text'],
+      date: DateTime.parse(map['date']),
+    );
+  }
+}
+
 class Car {
   final String id;
   final String name;
@@ -5,9 +37,9 @@ class Car {
   final String image;
   final String make;
   final String makeImage;
-  final List<String> comments;
+  final List<Comment> comments;
   final String description;
-  final int rating;
+  int rating; // Removed final
   final String transmission;
   final String userId;
   final String userPhone;
@@ -36,7 +68,7 @@ class Car {
     String? image,
     String? make,
     String? makeImage,
-    List<String>? comments,
+    List<Comment>? comments,
     String? description,
     int? rating,
     String? transmission,
@@ -69,7 +101,7 @@ class Car {
       'image': image,
       'make': make,
       'makeImage': makeImage,
-      'comments': comments,
+      'comments': comments.map((comment) => comment.toMap()).toList(),
       'description': description,
       'rating': rating,
       'transmission': transmission,
@@ -81,19 +113,19 @@ class Car {
 
   factory Car.fromMap(Map<String, dynamic> map) {
     return Car(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      price: map['price'] as String,
-      image: map['image'] as String,
-      make: map['make'] as String,
-      makeImage: map['makeImage'] as String,
-      comments: List<String>.from(map['comments'] as List<dynamic>),
-      description: map['description'] as String,
-      rating: map['rating'] as int,
-      transmission: map['transmission'] as String,
-      userId: map['userId'] as String,
-      userPhone: map['userPhone'] as String,
-      userEmail: map['userEmail'] as String?,
+      id: map['id'],
+      name: map['name'],
+      price: map['price'],
+      image: map['image'],
+      make: map['make'],
+      makeImage: map['makeImage'],
+      comments: List<Comment>.from(map['comments']?.map((x) => Comment.fromMap(x)) ?? []),
+      description: map['description'],
+      rating: map['rating'],
+      transmission: map['transmission'],
+      userId: map['userId'],
+      userPhone: map['userPhone'],
+      userEmail: map['userEmail'],
     );
   }
 }

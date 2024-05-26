@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
+import 'package:sayarty/pages/errorPopup.dart';
+import 'package:sayarty/pages/transaction.dart';
 import '../components/car_make.dart';
 import '../components/featured_cars.dart';
 import './car_makes_screen.dart';
@@ -10,10 +12,8 @@ import './favorites.dart';
 import 'package:sayarty/models/car.dart';
 import './addingcars.dart';
 import '../providers/auth_provider.dart';
-import '../main.dart';
-import './profile_information.dart';
-import './errorPopup.dart';
 import '../Users_Read_write.dart';
+import './transaction.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   List<Car> _favorites = [];
   List<Car> _userAddedCars = [];
+  List<Car> _availableCars = _getDemoCars(); // Initialize with demo cars
 
   void _onItemTapped(int index) {
     setState(() {
@@ -67,9 +68,11 @@ class _HomeState extends State<Home> {
       HomeContent(
         addFavorite: _addFavorite,
         userAddedCars: _userAddedCars,
+        availableCars: _availableCars,
       ),
-      userId != "12345" ? FavoritesPage(favorites: _favorites) : Login(),
+      userId != "12345" ? FavoritesPage() : Login(),
       userId != "12345" ? ProfileInformation() : Login(),
+      userId != "12345" ? TransactionPage() : Login(), // Adding the transaction page
     ];
 
     return Scaffold(
@@ -111,6 +114,10 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person, color: Color(0xFFF7F7F7)),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart, color: Color(0xFFF7F7F7)),
+            label: 'Transaction', // Adding the transaction page
           ),
         ],
       ),
@@ -179,20 +186,89 @@ class _HomeState extends State<Home> {
                     //     ,
 
                     ));
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
           },
         ),
       ),
     );
+  }
+
+  static List<Car> _getDemoCars() {
+    return [
+      Car(
+        id: '1',
+        name: 'Toyota Camry',
+        price: '\$24,000',
+        image: 'https://www.toyota.com/imgix/responsive/images/mlp/colorizer/2021/camry/3T3/1.png',
+        make: 'Toyota',
+        makeImage: 'https://www.carlogos.org/car-logos/toyota-logo-2005-download.png',
+        comments: [],
+        description: 'A reliable and efficient sedan.',
+        rating: 4,
+        transmission: 'Automatic',
+        userId: 'dummy_user',
+        userPhone: '+1234567890',
+        userEmail: 'dummy@example.com',
+      ),
+      Car(
+        id: '2',
+        name: 'Ford Mustang',
+        price: '\$36,000',
+        image: 'https://www.ford.com/is/image/content/dam/brand_ford/en_us/brand/performance/mustang/2021/gallery/dm/21frd_mst_s550_gt_hero_dsc_5915.jpg',
+        make: 'Ford',
+        makeImage: 'https://www.carlogos.org/car-logos/ford-logo-2003.png',
+        comments: [],
+        description: 'A powerful and iconic muscle car.',
+        rating: 5,
+        transmission: 'Manual',
+        userId: 'dummy_user',
+        userPhone: '+1234567890',
+        userEmail: 'dummy@example.com',
+      ),
+      Car(
+        id: '3',
+        name: 'BMW X5',
+        price: '\$58,000',
+        image: 'https://cdn.bmwblog.com/wp-content/uploads/2019/09/BMW-X5-M-SUV.jpg',
+        make: 'BMW',
+        makeImage: 'https://www.carlogos.org/car-logos/bmw-logo-2020-blue-white.png',
+        comments: [],
+        description: 'A luxurious and spacious SUV.',
+        rating: 4,
+        transmission: 'Automatic',
+        userId: 'dummy_user',
+        userPhone: '+1234567890',
+        userEmail: 'dummy@example.com',
+      ),
+      Car(
+        id: '4',
+        name: 'Honda Civic',
+        price: '\$20,000',
+        image: 'https://automobiles.honda.com/images/2021/civic-sedan/hero-gallery/2021-civic-sedan-hero-gallery.jpg',
+        make: 'Honda',
+        makeImage: 'https://www.carlogos.org/car-logos/honda-logo-1700x1150.png',
+        comments: [],
+        description: 'A compact and fuel-efficient car.',
+        rating: 4,
+        transmission: 'Automatic',
+        userId: 'dummy_user',
+        userPhone: '+1234567890',
+        userEmail: 'dummy@example.com',
+      ),
+    ];
   }
 }
 
 class HomeContent extends StatefulWidget {
   final Function(Car) addFavorite;
   final List<Car> userAddedCars;
+  final List<Car> availableCars;
 
-  const HomeContent(
-      {super.key, required this.addFavorite, required this.userAddedCars});
+  const HomeContent({
+    super.key,
+    required this.addFavorite,
+    required this.userAddedCars,
+    required this.availableCars,
+  });
 
   @override
   _HomeContentState createState() => _HomeContentState();
@@ -279,7 +355,7 @@ class _HomeContentState extends State<HomeContent> {
         const SizedBox(height: 20),
         FeaturedCars(
           addFavorite: widget.addFavorite,
-          cars: [],
+          cars: widget.availableCars,
         ),
         if (widget.userAddedCars.isNotEmpty) ...[
           const SizedBox(height: 20),
@@ -466,8 +542,7 @@ class _HomeContentState extends State<HomeContent> {
         style: const TextStyle(
           color: Color(0xFFF7F7F7),
           fontSize: 16,
-          fontWeight: FontWeight.w400,
-        ),
+          fontWeight: FontWeight.w400),
       ),
     );
   }
