@@ -1,6 +1,6 @@
 # sayarty
 
-A new Flutter project.
+Figma Prototype : https://www.figma.com/design/3Oybf6oSShkgyp4rFvK2dG/Untitled?node-id=0-1
 
 ## Getting Started
 
